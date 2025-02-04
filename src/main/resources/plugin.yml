@@ -1,0 +1,13 @@
+name: MCSCore
+version: '${project.version}'
+main: me.nonamegmm.mcscore.MCSCore
+api-version: '1.13'
+prefix: MCSCore
+load: STARTUP
+authors: [NoNameGMM]
+description: An CS System For MC
+commands:
+  mcscore:
+    description: main command
+    aliases: mcs
+    permission: mcscore.command
