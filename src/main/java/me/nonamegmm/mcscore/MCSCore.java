@@ -7,7 +7,6 @@ import me.nonamegmm.mcscore.utils.room.JoinRoom;
 import me.nonamegmm.mcscore.utils.Init;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,12 +41,7 @@ public final class MCSCore extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(Objects.equals(args[0], "competitive")) {
             if(Objects.equals(args[1], "join")) {
-                if (sender instanceof ConsoleCommandSender) {
-                    joinRoom.joinCompetitive("Console");
-                }
-                else {
-                    joinRoom.joinCompetitive(sender.getName());
-                }
+                joinRoom.joinCompetitive(sender.getName());
             }
         }
         return false;
