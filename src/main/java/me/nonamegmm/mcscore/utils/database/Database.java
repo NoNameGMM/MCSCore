@@ -9,6 +9,8 @@ import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.MCSCore;
 import org.bukkit.entity.Player;
 
+import static me.nonamegmm.mcscore.MCSCore.getWorldManager;
+
 public class Database {
 
     private static final MCSCore plugin = MCSCore.getInstance();
@@ -79,7 +81,7 @@ public class Database {
         }
     }
 
-    public static void join(String name) {
+    public static String join(String name) {
         String room = checkRoomIsFull();
         String sql = "INSERT INTO " + room + " (player_name) VALUES (?)";
         try (Connection conn = DriverManager.getConnection(rooms);
@@ -93,6 +95,7 @@ public class Database {
         } catch (SQLException e) {
             Log.warn("插入数据时发生错误：" + e.getMessage());
         }
+        return room;
     }
 
     private static String checkRoomIsFull() {
@@ -147,6 +150,7 @@ public class Database {
                                     createStmt.execute();
                                     Log.info("表 '" + nextTableName + "' 创建成功！");
                                     finalRoom = nextTableName;
+                                    getWorldManager().loadWorld(finalRoom);
                                 }
                             }
                             else {

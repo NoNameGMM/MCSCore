@@ -58,10 +58,6 @@
           <id>sonatype</id>
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
-      <repository>
-          <id>Ryandw11 Repo</id>
-          <url>https://repo.ryandw11.com/repository/maven-releases/</url>
-      </repository>
   </repositories>
 
   <dependencies>
@@ -82,10 +78,9 @@
           <version>2.7.4</version>
       </dependency>
       <dependency>
-          <groupId>com.ryandw11</groupId>
-          <artifactId>CustomStructures</artifactId>
-          <version>1.9.0</version>
-          <scope>provided</scope>
+          <groupId>com.onarandombox</groupId>
+          <artifactId>MultiverseCore</artifactId>
+          <version>4.3.14</version>
       </dependency>
   </dependencies>
 </project>

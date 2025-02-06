@@ -1,10 +1,13 @@
 package me.nonamegmm.mcscore;
 
 import com.minecraft.economy.apis.UltiEconomyAPI;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.utils.room.CreateRoom;
 import me.nonamegmm.mcscore.utils.room.JoinRoom;
 import me.nonamegmm.mcscore.utils.Init;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +26,7 @@ public final class MCSCore extends JavaPlugin implements Listener {
     public static UltiEconomyAPI economy;
     private static CreateRoom createRoom;
     private static JoinRoom joinRoom;
+    private static MVWorldManager worldManager;
 
     public static UltiEconomyAPI getEconomy() {
         return economy;
@@ -32,13 +36,20 @@ public final class MCSCore extends JavaPlugin implements Listener {
         return instance;
     }
 
+    public static MVWorldManager getWorldManager() {
+        return worldManager;
+    }
+
     @Override
     public void onEnable() {
+        MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
+        worldManager = core.getMVWorldManager();
         getServer().getPluginManager().registerEvents(this, this);
         instance = this;
         Init.InitPlugin();
         joinRoom = new JoinRoom();
         createRoom = new CreateRoom();
+        worldManager.loadWorld("room1");
         Log.info("插件已成功启动");
         Log.info("https://github.com/NoNameGMM/MCSCore");
     }
