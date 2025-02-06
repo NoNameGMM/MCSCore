@@ -35,13 +35,11 @@ public class Database {
     public static void createPlayerProfile(Player player) {
         try (Connection conn = DriverManager.getConnection(players)) {
             String createSql = "CREATE TABLE IF NOT EXISTS " + player.getName() + " (" +
-                    "plays INTEGER," +
-                    "win INTEGER," +
-                    "lose INTEGER" +
-                    "win_rate FLOAT" +
-                    "kills INTEGER" +
-                    "avg_adr FLOAT" +
-                    "avg_rating FLOAT" +
+                    "plays INTEGER DEFAULT 0," +
+                    "win_rate DOUBLE DEFAULT 0.0" +
+                    "kills INTEGER DEFAULT 0" +
+                    "avg_adr DOUBLE DEFAULT 0.0" +
+                    "avg_rating DOUBLE DEFAULT 0.0" +
                     ");";
             try (PreparedStatement createStmt = conn.prepareStatement(createSql)) {
                 createStmt.execute();
