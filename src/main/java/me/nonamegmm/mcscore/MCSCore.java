@@ -5,8 +5,6 @@ import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.utils.room.CreateRoom;
 import me.nonamegmm.mcscore.utils.room.JoinRoom;
 import me.nonamegmm.mcscore.utils.Init;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

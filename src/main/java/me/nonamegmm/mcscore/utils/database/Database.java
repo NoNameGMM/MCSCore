@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.MCSCore;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class Database {
 
