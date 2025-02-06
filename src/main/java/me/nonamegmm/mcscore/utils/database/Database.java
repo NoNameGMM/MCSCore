@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.MCSCore;
+import org.bukkit.entity.Player;
 
 public class Database {
 
@@ -26,6 +27,26 @@ public class Database {
     public static void checkPlayerDatabase() {
         try (Connection conn = DriverManager.getConnection(players)) {
             Log.info("连接到数据库成功！");
+        } catch (SQLException e) {
+            Log.warn(e.getMessage());
+        }
+    }
+
+    public static void createPlayerProfile(Player player) {
+        try (Connection conn = DriverManager.getConnection(players)) {
+            String createSql = "CREATE TABLE IF NOT EXISTS " + player.getName() + " (" +
+                    "plays INTEGER," +
+                    "win INTEGER," +
+                    "lose INTEGER" +
+                    "win_rate FLOAT" +
+                    "kills INTEGER" +
+                    "avg_adr FLOAT" +
+                    "avg_rating FLOAT" +
+                    ");";
+            try (PreparedStatement createStmt = conn.prepareStatement(createSql)) {
+                createStmt.execute();
+                Log.info("表 '" + player.getName() + "' 创建成功！");
+            }
         } catch (SQLException e) {
             Log.warn(e.getMessage());
         }
