@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Database {
 
-    static MCSCore plugin = JavaPlugin.getPlugin(MCSCore.class);
+    private static final MCSCore plugin = MCSCore.getInstance();
     private static final File dataFolder = plugin.getDataFolder();
     private static final String rooms = "jdbc:sqlite:" + dataFolder + "/rooms.db";
     private static final String players = "jdbc:sqlite:" + dataFolder + "/players.db";
