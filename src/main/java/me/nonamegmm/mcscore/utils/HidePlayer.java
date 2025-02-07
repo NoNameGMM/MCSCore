@@ -10,8 +10,6 @@ import java.util.Set;
 import static org.bukkit.scoreboard.Team.Option.NAME_TAG_VISIBILITY;
 
 public class HidePlayer {
-    public final Set<Player> hidedPlayer = new HashSet<>();
-
     public void hideNick(Player player, String hide) {
         Team t = getHideTeam(player);
         if (!t.hasEntry(hide)) {

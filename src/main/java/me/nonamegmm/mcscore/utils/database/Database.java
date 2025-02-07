@@ -38,18 +38,28 @@ public class Database {
         try (Connection conn = DriverManager.getConnection(players)) {
             String createSql = "CREATE TABLE IF NOT EXISTS " + player.getName() + " (" +
                     "plays INTEGER DEFAULT 0," +
-                    "win_rate DOUBLE DEFAULT 0.0" +
-                    "kills INTEGER DEFAULT 0" +
-                    "avg_adr DOUBLE DEFAULT 0.0" +
-                    "avg_rating DOUBLE DEFAULT 0.0" +
+                    "win_rate DOUBLE DEFAULT 0.0," +
+                    "kills INTEGER DEFAULT 0," +
+                    "avg_adr DOUBLE DEFAULT 0.0," +
+                    "avg_rating DOUBLE DEFAULT 0.0," +
+                    "room INTEGER DEFAULT 0," +
+                    "in_room TEXT" +
                     ");";
             try (PreparedStatement createStmt = conn.prepareStatement(createSql)) {
                 createStmt.execute();
                 Log.info("表 '" + player.getName() + "' 创建成功！");
             }
+
+            String insertSql = "INSERT INTO " + player.getName() + " DEFAULT VALUES";
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                insertStmt.executeUpdate();
+                System.out.println("默认数据插入成功！");
+            }
         } catch (SQLException e) {
             Log.warn(e.getMessage());
         }
+
+
     }
 
     public static void checkTable() {
@@ -81,6 +91,47 @@ public class Database {
         }
     }
 
+    public static void playerLeft(String name) {
+        String in_room = "";
+
+        String querySql = "SELECT in_room FROM " + name + " LIMIT 1";
+        try (Connection conn = DriverManager.getConnection(players);
+             PreparedStatement queryStmt = conn.prepareStatement(querySql);
+             ResultSet rs = queryStmt.executeQuery()) {
+            if (rs.next()) {
+                in_room = rs.getString("in_room");
+                Log.info("第一行的 in_room 值: " + in_room);
+            } else {
+                Log.warn("表中没有数据！");
+            }
+        } catch (SQLException e) {
+            Log.warn("查询表时发生错误：" + e.getMessage());
+        }
+
+        String updateSql = "UPDATE " + name + " SET room = 0, in_room = '' WHERE ROWID = (SELECT MIN(ROWID) FROM " + name + ")";
+        try (Connection conn = DriverManager.getConnection(players);
+             PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+            // 执行更新操作
+            int rowsAffected = updateStmt.executeUpdate();
+            Log.info("更新成功，受影响的行数：" + rowsAffected);
+        } catch (SQLException e) {
+            Log.warn("更新表时发生错误：" + e.getMessage());
+        }
+
+        String deleteSql = "DELETE FROM " + in_room + " WHERE player_name = ?";
+        try (Connection conn = DriverManager.getConnection(rooms);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+            // 设置参数
+            deleteStmt.setString(1, name);
+
+            // 执行删除操作
+            int rowsAffected = deleteStmt.executeUpdate();
+            Log.info("删除成功，受影响的行数：" + rowsAffected);
+        } catch (SQLException e) {
+            Log.warn("删除表时发生错误：" + e.getMessage());
+        }
+    }
+
     public static String join(String name) {
         String room = checkRoomIsFull();
         String sql = "INSERT INTO " + room + " (player_name) VALUES (?)";
@@ -95,7 +146,36 @@ public class Database {
         } catch (SQLException e) {
             Log.warn("插入数据时发生错误：" + e.getMessage());
         }
+        String sql1 = "UPDATE " + name + " SET room = 1, in_room = ? WHERE ROWID = (SELECT MIN(ROWID) FROM " + name + ")";
+        try (Connection conn = DriverManager.getConnection(players);
+             PreparedStatement pstmt = conn.prepareStatement(sql1)) {
+            // 设置参数
+            pstmt.setString(1, room);
+
+            // 执行插入操作
+            pstmt.executeUpdate();
+            Log.info("数据插入成功！");
+        } catch (SQLException e) {
+            Log.warn("插入数据时发生错误：" + e.getMessage());
+        }
         return room;
+    }
+
+    public static Boolean checkJoin(String name) {
+        String querySql = "SELECT room FROM " + name + " WHERE room = 1";
+
+        try (Connection conn = DriverManager.getConnection(players);
+             PreparedStatement queryStmt = conn.prepareStatement(querySql);
+             ResultSet rs = queryStmt.executeQuery()) {
+            if (rs.next()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println("查询表时发生错误：" + e.getMessage());
+        }
+        return true;
     }
 
     private static String checkRoomIsFull() {

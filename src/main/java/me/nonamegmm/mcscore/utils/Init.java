@@ -9,8 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static me.nonamegmm.mcscore.utils.database.Database.checkDatabase;
-import static me.nonamegmm.mcscore.utils.database.Database.checkPlayerDatabase;
+import static me.nonamegmm.mcscore.utils.database.Database.*;
 
 public class Init {
     private static final MCSCore plugin = MCSCore.getInstance();
@@ -58,5 +57,6 @@ public class Init {
         setupEconomy();
         checkDatabase();
         checkPlayerDatabase();
+        checkTable();
     }
 }
