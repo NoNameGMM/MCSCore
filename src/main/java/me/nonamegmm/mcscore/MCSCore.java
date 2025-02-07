@@ -3,11 +3,13 @@ package me.nonamegmm.mcscore;
 import com.minecraft.economy.apis.UltiEconomyAPI;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
+import me.nonamegmm.mcscore.utils.HidePlayer;
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.utils.room.CreateRoom;
 import me.nonamegmm.mcscore.utils.room.JoinRoom;
 import me.nonamegmm.mcscore.utils.Init;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -60,6 +62,8 @@ public final class MCSCore extends JavaPlugin implements Listener {
         if(!player.hasPlayedBefore())
         {
             createPlayerProfile(player);
+            HidePlayer hidePlayer = new HidePlayer();
+            hidePlayer.hideNick(player, player.getName());
         }
     }
 
