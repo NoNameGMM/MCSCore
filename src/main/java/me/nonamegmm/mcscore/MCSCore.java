@@ -64,7 +64,7 @@ public final class MCSCore extends JavaPlugin {
         else {
             sender.sendMessage("这个指令还没做");
         }
-        return false;
+        return true;
     }
 
     @Override

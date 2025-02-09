@@ -7,10 +7,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 
 import static me.nonamegmm.mcscore.utils.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.utils.database.Database.playerLeft;
@@ -63,5 +66,13 @@ public class Handler implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         playerLeft(event.getPlayer().getName());
+        Inventory inventory = event.getPlayer().getInventory();
+        // 清空背包
+        inventory.clear();
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+
     }
 }
