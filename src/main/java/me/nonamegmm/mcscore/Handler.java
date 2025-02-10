@@ -7,16 +7,16 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
-import static me.nonamegmm.mcscore.utils.database.Database.createPlayerProfile;
-import static me.nonamegmm.mcscore.utils.database.Database.playerLeft;
+import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
+import static me.nonamegmm.mcscore.database.Database.playerLeft;
 import static org.bukkit.Bukkit.getServer;
 
 public class Handler implements Listener {
@@ -57,7 +57,8 @@ public class Handler implements Listener {
                         material == Material.OAK_BUTTON || material == Material.SPRUCE_BUTTON ||
                         material == Material.BIRCH_BUTTON || material == Material.JUNGLE_BUTTON ||
                         material == Material.ACACIA_BUTTON || material == Material.DARK_OAK_BUTTON ||
-                        material == Material.CRIMSON_BUTTON || material == Material.WARPED_BUTTON) {
+                        material == Material.CRIMSON_BUTTON || material == Material.WARPED_BUTTON ||
+                        material == Material.STONE_BUTTON) {
                     event.setCancelled(true);
                 }
             }
@@ -67,12 +68,18 @@ public class Handler implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         playerLeft(event.getPlayer().getName());
         Inventory inventory = event.getPlayer().getInventory();
-        // 清空背包
         inventory.clear();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
 
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getClick().isShiftClick() || event.getClick().isRightClick()) {
+            event.setCancelled(true);
+        }
     }
 }

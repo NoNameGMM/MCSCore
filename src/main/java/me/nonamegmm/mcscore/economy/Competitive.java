@@ -1,4 +1,4 @@
-package me.nonamegmm.mcscore.utils.economy;
+package me.nonamegmm.mcscore.economy;
 
 import com.minecraft.economy.apis.UltiEconomyAPI;
 import me.nonamegmm.mcscore.MCSCore;

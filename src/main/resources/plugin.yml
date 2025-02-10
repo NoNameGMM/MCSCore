@@ -5,9 +5,12 @@ api-version: '1.13'
 prefix: MCSCore
 load: STARTUP
 authors: [NoNameGMM]
+depend:
+  - UltiEconomy
+  - Multiverse-Core
 description: An CS System For MC
 commands:
   mcscore:
     description: main command
     aliases: mcs
-    permission: mcscore.command
+    # permission: mcscore.command

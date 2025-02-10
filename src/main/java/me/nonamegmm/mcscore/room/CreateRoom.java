@@ -1,4 +1,4 @@
-package me.nonamegmm.mcscore.utils.room;
+package me.nonamegmm.mcscore.room;
 
 public class CreateRoom {
     public void CreateCompetitive() {

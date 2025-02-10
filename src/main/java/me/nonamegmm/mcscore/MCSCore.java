@@ -4,18 +4,21 @@ import com.minecraft.economy.apis.UltiEconomyAPI;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import me.nonamegmm.mcscore.utils.Log;
-import me.nonamegmm.mcscore.utils.room.CreateRoom;
-import me.nonamegmm.mcscore.utils.room.JoinRoom;
+import me.nonamegmm.mcscore.room.CreateRoom;
+import me.nonamegmm.mcscore.room.JoinRoom;
 import me.nonamegmm.mcscore.utils.Init;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static me.nonamegmm.mcscore.database.Database.playerLeft;
 
 
 public final class MCSCore extends JavaPlugin {
@@ -83,6 +86,11 @@ public final class MCSCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            playerLeft(player.getName());
+            Inventory inventory = player.getInventory();
+            inventory.clear();
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package me.nonamegmm.mcscore.utils.database;
+package me.nonamegmm.mcscore.database;
 
 import java.io.File;
 import java.sql.*;
@@ -111,7 +111,6 @@ public class Database {
         String updateSql = "UPDATE " + name + " SET room = 0, in_room = '' WHERE ROWID = (SELECT MIN(ROWID) FROM " + name + ")";
         try (Connection conn = DriverManager.getConnection(players);
              PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-            // 执行更新操作
             int rowsAffected = updateStmt.executeUpdate();
             Log.info("更新成功，受影响的行数：" + rowsAffected);
         } catch (SQLException e) {
@@ -121,10 +120,7 @@ public class Database {
         String deleteSql = "DELETE FROM " + in_room + " WHERE player_name = ?";
         try (Connection conn = DriverManager.getConnection(rooms);
              PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
-            // 设置参数
             deleteStmt.setString(1, name);
-
-            // 执行删除操作
             int rowsAffected = deleteStmt.executeUpdate();
             Log.info("删除成功，受影响的行数：" + rowsAffected);
         } catch (SQLException e) {
@@ -137,10 +133,7 @@ public class Database {
         String sql = "INSERT INTO " + room + " (player_name) VALUES (?)";
         try (Connection conn = DriverManager.getConnection(rooms);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // 设置参数
             pstmt.setString(1, name);
-
-            // 执行插入操作
             pstmt.executeUpdate();
             Log.info("数据插入成功！");
         } catch (SQLException e) {
@@ -149,10 +142,7 @@ public class Database {
         String sql1 = "UPDATE " + name + " SET room = 1, in_room = ? WHERE ROWID = (SELECT MIN(ROWID) FROM " + name + ")";
         try (Connection conn = DriverManager.getConnection(players);
              PreparedStatement pstmt = conn.prepareStatement(sql1)) {
-            // 设置参数
             pstmt.setString(1, room);
-
-            // 执行插入操作
             pstmt.executeUpdate();
             Log.info("数据插入成功！");
         } catch (SQLException e) {
@@ -163,7 +153,6 @@ public class Database {
 
     public static Boolean checkJoin(String name) {
         String querySql = "SELECT room FROM " + name + " WHERE room = 1";
-
         try (Connection conn = DriverManager.getConnection(players);
              PreparedStatement queryStmt = conn.prepareStatement(querySql);
              ResultSet rs = queryStmt.executeQuery()) {
@@ -182,17 +171,13 @@ public class Database {
         String finalRoom = "";
         try (Connection conn = DriverManager.getConnection(rooms)) {
             Log.info("连接到数据库成功！");
-
-            // 查询所有表名
             String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'room%'";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
                 String maxRoom = null;
                 int maxNumber = -1;
-
                 while (rs.next()) {
                     String tableName = rs.getString("name");
-                    // 使用正则表达式提取数字部分
                     Pattern pattern = Pattern.compile("room(\\d+)");
                     Matcher matcher = pattern.matcher(tableName);
                     if (matcher.matches()) {
@@ -211,7 +196,6 @@ public class Database {
                     int currentRoomNumber = Integer.parseInt(matcher.group(1));
                     String nextTableName = "room" + (currentRoomNumber + 1);
 
-                    // 查询当前表的记录数
                     String countSql = "SELECT COUNT(*) AS total FROM " + maxRoom;
                     try (PreparedStatement countStmt = conn.prepareStatement(countSql);
                          ResultSet rs2 = countStmt.executeQuery()) {
@@ -220,7 +204,6 @@ public class Database {
                             Log.info("表 '" + maxRoom + "' 中的 id 总数为 " + total);
 
                             if (total == 10) {
-                                // 如果当前表的记录数为 10，创建下一个表
                                 String createSql = "CREATE TABLE IF NOT EXISTS " + nextTableName + " (" +
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                                         "player_name TEXT NOT NULL," +
