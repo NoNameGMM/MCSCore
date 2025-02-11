@@ -26,7 +26,7 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Handler implements PluginMessageListener,Listener {
     private static final MCSCore plugin = MCSCore.getInstance();
-    public static final String menuChannel = "MCSCore.menu";
+    public static final String menuChannel = "mcscore.menu";
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
