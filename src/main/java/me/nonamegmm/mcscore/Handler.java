@@ -1,10 +1,9 @@
 package me.nonamegmm.mcscore;
 
 import me.nonamegmm.mcscore.utils.HidePlayer;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import me.nonamegmm.mcscore.utils.Log;
+import me.nonamegmm.mcscore.utils.Message;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,12 +13,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
 import static org.bukkit.Bukkit.getServer;
 
-public class Handler implements Listener {
+public class Handler implements PluginMessageListener,Listener {
+    private static final MCSCore plugin = MCSCore.getInstance();
+    public static final String menuChannel = "MCSCore.menu";
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -80,6 +88,42 @@ public class Handler implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getClick().isShiftClick() || event.getClick().isRightClick()) {
             event.setCancelled(true);
+        }
+    }
+
+    public void onRegisterChannel() {
+        getServer().getMessenger().registerOutgoingPluginChannel(plugin, menuChannel);
+        getServer().getMessenger().registerIncomingPluginChannel(plugin, menuChannel, this);
+
+        Bukkit.getPluginManager().registerEvents(this,plugin);
+    }
+
+    @Override
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+        if (!channel.equals(menuChannel)) {
+            return;
+        }
+
+        // 处理收到的数据包
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(message);
+        DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+
+        try {
+            while (dataInputStream.available() > 0) {
+                String receivedMessage = dataInputStream.readUTF();
+                Log.info("收到来自 Forge Mod 的消息: " + receivedMessage);
+
+                Message.sendMessageToForgeClient(player,"你好,客户端 这里是服务端");
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                dataInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
