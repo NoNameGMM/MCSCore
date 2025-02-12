@@ -24,7 +24,7 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Handler implements PluginMessageListener,Listener {
     private static final MCSCore plugin = MCSCore.getInstance();
-    public static final String menuChannel = "mcscore.menu";
+    public static final String menuChannel = "mcscore:menu";
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -106,22 +106,6 @@ public class Handler implements PluginMessageListener,Listener {
         try {
             String msg = in.readUTF();
             Log.info("来自客户端的消息:" + msg);
-            sendClient(player);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendClient(Player player) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(stream);
-
-        try {
-            out.writeUTF("Forge 你好!");
-            out.writeFloat(1.0f);
-            out.writeFloat(1.0f);
-
-            player.sendPluginMessage(plugin, menuChannel, stream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

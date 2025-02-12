@@ -76,6 +76,10 @@
           <url>https://repo.codemc.io/repository/maven-public/</url>
           <layout>default</layout>
       </repository>
+      <repository>
+          <id>OnARandomBox</id>
+          <url>https://repo.onarandombox.com/content/groups/public/</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -98,9 +102,9 @@
           <scope>provided</scope>
       </dependency>
       <dependency>
-          <groupId>com.onarandombox</groupId>
-          <artifactId>MultiverseCore</artifactId>
-          <version>4.3.14</version>
+          <groupId>com.onarandombox.multiversecore</groupId>
+          <artifactId>multiverse-core</artifactId>
+          <version>4.3.15-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
