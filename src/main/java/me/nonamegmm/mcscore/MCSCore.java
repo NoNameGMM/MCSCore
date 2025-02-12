@@ -52,6 +52,8 @@ public final class MCSCore extends JavaPlugin {
         worldManager.loadWorld("room1");
         Log.info("插件已成功启动");
         Log.info("https://github.com/NoNameGMM/MCSCore");
+        Handler hand = new Handler();
+        hand.registerChannel();
     }
 
     @Override

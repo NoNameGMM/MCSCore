@@ -16,9 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
@@ -91,7 +89,7 @@ public class Handler implements PluginMessageListener,Listener {
         }
     }
 
-    public void onRegisterChannel() {
+    public void registerChannel() {
         getServer().getMessenger().registerOutgoingPluginChannel(plugin, menuChannel);
         getServer().getMessenger().registerIncomingPluginChannel(plugin, menuChannel, this);
 
@@ -100,30 +98,32 @@ public class Handler implements PluginMessageListener,Listener {
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-        if (!channel.equals(menuChannel)) {
-            return;
-        }
+        if (!channel.equals(menuChannel)) return;
 
-        // 处理收到的数据包
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(message);
-        DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+        ByteArrayInputStream stream = new ByteArrayInputStream(message);
+        DataInputStream in = new DataInputStream(stream);
 
         try {
-            while (dataInputStream.available() > 0) {
-                String receivedMessage = dataInputStream.readUTF();
-                Log.info("收到来自 Forge Mod 的消息: " + receivedMessage);
-
-                Message.sendMessageToForgeClient(player,"你好,客户端 这里是服务端");
-
-            }
+            String msg = in.readUTF();
+            Log.info("来自客户端的消息:" + msg);
+            sendClient(player);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                dataInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        }
+    }
+
+    private void sendClient(Player player) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+
+        try {
+            out.writeUTF("Forge 你好!");
+            out.writeFloat(1.0f);
+            out.writeFloat(1.0f);
+
+            player.sendPluginMessage(plugin, menuChannel, stream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
