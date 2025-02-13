@@ -2,7 +2,6 @@ package me.nonamegmm.mcscore;
 
 import me.nonamegmm.mcscore.utils.HidePlayer;
 import me.nonamegmm.mcscore.utils.Log;
-import me.nonamegmm.mcscore.utils.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,13 +12,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.Objects;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
+import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Bukkit.getServer;
 
 public class Handler implements PluginMessageListener,Listener {
@@ -43,7 +46,6 @@ public class Handler implements PluginMessageListener,Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-
         if (player.getGameMode() == GameMode.ADVENTURE) {
             if (event.getClickedBlock() != null) {
                 Material material = event.getClickedBlock().getType();
@@ -87,6 +89,18 @@ public class Handler implements PluginMessageListener,Listener {
         if (event.getClick().isShiftClick() || event.getClick().isRightClick()) {
             event.setCancelled(true);
         }
+        else if (event.getClick().isLeftClick()) {
+            ItemStack item = event.getCurrentItem();
+            if (item != null && item.hasItemMeta()) {
+                ItemMeta itemMeta = item.getItemMeta();
+                if (itemMeta != null && itemMeta.hasDisplayName()) {
+                    String itemName = itemMeta.getDisplayName();
+                    System.out.println("点击的物品名称: " + itemName);
+                } else {
+                    System.out.println("点击的物品没有名称");
+                }
+            }
+        }
     }
 
     public void registerChannel() {
@@ -107,6 +121,10 @@ public class Handler implements PluginMessageListener,Listener {
                 while(in.available() > 0) {
                     String receivedMessage = in.readUTF();
                     Log.info("收到来自客户端的消息: " + receivedMessage);
+                    String[] parts = receivedMessage.split("\\s+");
+                    if(parts[0].equals("buy")) {
+                        Menu.openMenu(getPlayer(parts[1]));
+                    }
                 }
             } catch (IOException e) {
                 Log.info(e.toString());
