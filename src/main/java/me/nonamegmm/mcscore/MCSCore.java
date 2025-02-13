@@ -42,10 +42,10 @@ public final class MCSCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         worldManager = core.getMVWorldManager();
         getServer().getPluginManager().registerEvents(new Handler(), this);
-        instance = this;
         Init.InitPlugin();
         joinRoom = new JoinRoom();
         createRoom = new CreateRoom();

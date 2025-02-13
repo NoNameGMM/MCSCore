@@ -23,7 +23,7 @@ import static me.nonamegmm.mcscore.database.Database.playerLeft;
 import static org.bukkit.Bukkit.getServer;
 
 public class Handler implements PluginMessageListener,Listener {
-    private static final MCSCore plugin = MCSCore.getInstance();
+    private static MCSCore plugin = MCSCore.getInstance();
     public static final String menuChannel = "mcscore:menu";
 
     @EventHandler
@@ -90,24 +90,34 @@ public class Handler implements PluginMessageListener,Listener {
     }
 
     public void registerChannel() {
+        plugin = MCSCore.getInstance();
         getServer().getMessenger().registerOutgoingPluginChannel(plugin, menuChannel);
         getServer().getMessenger().registerIncomingPluginChannel(plugin, menuChannel, this);
-
         Bukkit.getPluginManager().registerEvents(this,plugin);
+        Log.info("消息通道注册成功");
     }
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-        if (!channel.equals(menuChannel)) return;
+        if (channel.equals(menuChannel)) {
+            ByteArrayInputStream stream = new ByteArrayInputStream(message);
+            DataInputStream in = new DataInputStream(stream);
 
-        ByteArrayInputStream stream = new ByteArrayInputStream(message);
-        DataInputStream in = new DataInputStream(stream);
+            try {
+                while(in.available() > 0) {
+                    String receivedMessage = in.readUTF();
+                    Log.info("收到来自客户端的消息: " + receivedMessage);
+                }
+            } catch (IOException e) {
+                Log.info(e.toString());
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    Log.info(e.toString());
+                }
 
-        try {
-            String msg = in.readUTF();
-            Log.info("来自客户端的消息:" + msg);
-        } catch (IOException e) {
-            e.printStackTrace();
+            }
         }
     }
 }
