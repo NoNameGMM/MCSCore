@@ -1,5 +1,6 @@
 package me.nonamegmm.mcscore;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import me.nonamegmm.mcscore.utils.HidePlayer;
 import me.nonamegmm.mcscore.utils.Log;
 import org.bukkit.*;
@@ -13,12 +14,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.Objects;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
@@ -28,6 +27,7 @@ import static org.bukkit.Bukkit.getServer;
 public class Handler implements PluginMessageListener,Listener {
     private static MCSCore plugin = MCSCore.getInstance();
     public static final String menuChannel = "mcscore:menu";
+    private static boolean isKKeyPressed = false;
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -86,20 +86,46 @@ public class Handler implements PluginMessageListener,Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
         if (event.getClick().isShiftClick() || event.getClick().isRightClick()) {
             event.setCancelled(true);
         }
         else if (event.getClick().isLeftClick()) {
-            ItemStack item = event.getCurrentItem();
-            if (item != null && item.hasItemMeta()) {
-                ItemMeta itemMeta = item.getItemMeta();
-                if (itemMeta != null && itemMeta.hasDisplayName()) {
-                    String itemName = itemMeta.getDisplayName();
-                    System.out.println("点击的物品名称: " + itemName);
-                } else {
-                    System.out.println("点击的物品没有名称");
+            if(!isKKeyPressed) {
+                ItemStack clickedItem = event.getCurrentItem();
+                Log.info(clickedItem.getType().toString());
+                if (clickedItem != null) {
+                    if (clickedItem.getType() == Material.AIR || clickedItem.getAmount() <= 0) {
+                        return;  // 忽略空物品
+                    }
+                    String gunid = NBT.get(clickedItem, nbt -> (String) nbt.getString("GunId"));
+                    player.sendMessage("你点击了物品: " + gunid);
+                    switch (gunid) {
+                        case "mcs2:cs_glock":
+                            Item.getGlock(player);
+                            break;
+                        case "mcs2:cs_m4a1s":
+                            Item.getM4A1S(player);
+                            break;
+                        case "mcs2:cs_awp":
+                            Item.getAWP(player);
+                            break;
+                        case "mcs2:cs_ak":
+                            Item.getAK47(player);
+                            break;
+                        case "mcs2:cs_usp":
+                            Item.getUSP(player);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                isKKeyPressed = true;
             }
+            else {
+                isKKeyPressed = false;
+            }
+            event.setCancelled(true);
         }
     }
 

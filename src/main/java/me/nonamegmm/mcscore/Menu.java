@@ -22,9 +22,9 @@ public class Menu {
         ItemMeta button3Meta = button3.getItemMeta();
         button3Meta.setUnbreakable(true);
         button3.setItemMeta(button3Meta);
-        inventory.setItem(12, button1);
-        inventory.setItem(13, button2);
-        inventory.setItem(14, button3);
+        inventory.setItem(2, button1);
+        inventory.setItem(4, button2);
+        inventory.setItem(6, button3);
         inventory.setContents(inventory.getContents());
         player.openInventory(inventory);
     }

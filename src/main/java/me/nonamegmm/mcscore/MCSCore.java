@@ -45,15 +45,13 @@ public final class MCSCore extends JavaPlugin {
         instance = this;
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         worldManager = core.getMVWorldManager();
-        getServer().getPluginManager().registerEvents(new Handler(), this);
         Init.InitPlugin();
         joinRoom = new JoinRoom();
         createRoom = new CreateRoom();
         worldManager.loadWorld("room1");
         Log.info("插件已成功启动");
         Log.info("https://github.com/NoNameGMM/MCSCore");
-        Handler hand = new Handler();
-        hand.registerChannel();
+        new Handler().registerChannel();
     }
 
     @Override
@@ -93,6 +91,5 @@ public final class MCSCore extends JavaPlugin {
             Inventory inventory = player.getInventory();
             inventory.clear();
         }
-
     }
 }
