@@ -7,11 +7,9 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -80,6 +78,18 @@ public class Handler implements PluginMessageListener,Listener {
     }
 
     @EventHandler
+    public void onPickup(EntityPickupItemEvent e) {
+        if (e.getEntity() instanceof org.bukkit.entity.Player) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPickup(PlayerPickupItemEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
 
     }
@@ -99,7 +109,7 @@ public class Handler implements PluginMessageListener,Listener {
                         return;  // 忽略空物品
                     }
                     String gunid = NBT.get(clickedItem, nbt -> (String) nbt.getString("GunId"));
-                    player.sendMessage("你点击了物品: " + gunid);
+                    player.sendMessage("你购买了枪械: " + gunid);
                     switch (gunid) {
                         case "mcs2:cs_glock":
                             Item.getGlock(player);
