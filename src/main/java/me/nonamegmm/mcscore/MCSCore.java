@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.codingguru.actionBarAPI.ActionBarAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public final class MCSCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        new ActionBarAPI(this);
         instance = this;
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         worldManager = core.getMVWorldManager();

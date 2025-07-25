@@ -1,6 +1,11 @@
 package me.nonamegmm.mcscore;
 
+import com.codingguru.actionBarAPI.ActionBarAPI;
+import com.codingguru.actionBarAPI.taskHandlers.reception;
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.iface.ReadableItemNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import me.nonamegmm.mcscore.utils.HidePlayer;
 import me.nonamegmm.mcscore.utils.Log;
 import org.bukkit.*;
@@ -16,6 +21,9 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
@@ -87,6 +95,48 @@ public class Handler implements PluginMessageListener,Listener {
     @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
+
+        Player player = e.getPlayer();
+        List<String> gunIds = getNearbyDrops(player, 3.0);
+
+        if (gunIds.isEmpty()) {
+            ActionBarAPI.startActionBar(player, "周围无掉落物", reception.Styles.gradient, List.of("WHITE"), null);
+        } else {
+            ActionBarAPI.startActionBar(player, "周围枪械: " + gunIds, reception.Styles.gradient, List.of("WHITE"), null);
+        }
+    }
+
+    private List<String> getNearbyDrops(Player player, double radius) {
+        List<String> list = new ArrayList<>();
+        player.getNearbyEntities(radius, radius, radius).forEach(en -> {
+            if (en instanceof org.bukkit.entity.Item) {
+                String GunId = NBT.get(((org.bukkit.entity.Item) en).getItemStack(), (Function<ReadableItemNBT, String>) nbt -> nbt.getString("GunId"));   // 或 "gun_id"
+                switch (GunId) {
+                    case "mcs2:cs_glock":
+                        list.add("格洛克18型");
+                        break;
+                    case "mcs2:cs_m4a1s":
+                        list.add("M4A1消音型");
+                        break;
+                    case "mcs2:cs_awp":
+                        list.add("AWP");
+                        break;
+                    case "mcs2:cs_ak":
+                        list.add("AK47");
+                        break;
+                    case "mcs2:cs_usp":
+                        list.add("USP消音型");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        return list;
     }
 
     @EventHandler

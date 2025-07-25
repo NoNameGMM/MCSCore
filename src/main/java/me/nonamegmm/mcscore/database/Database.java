@@ -64,7 +64,7 @@ public class Database {
 
     public static void checkTable() {
         try (Connection conn = DriverManager.getConnection(rooms);
-             PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")) {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")) {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
