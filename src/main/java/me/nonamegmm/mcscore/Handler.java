@@ -3,12 +3,12 @@ package me.nonamegmm.mcscore;
 import com.codingguru.actionBarAPI.ActionBarAPI;
 import com.codingguru.actionBarAPI.taskHandlers.reception;
 import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.iface.ReadableItemNBT;
-import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import me.nonamegmm.mcscore.utils.HidePlayer;
 import me.nonamegmm.mcscore.utils.Log;
+import me.nonamegmm.mcscore.utils.PickItem;
 import org.bukkit.*;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -88,7 +88,7 @@ public class Handler implements PluginMessageListener,Listener {
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof org.bukkit.entity.Player) {
-            e.setCancelled(true);
+            e.setCancelled(true); 
         }
     }
 
@@ -101,7 +101,7 @@ public class Handler implements PluginMessageListener,Listener {
     public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
 
         Player player = e.getPlayer();
-        List<String> gunIds = getNearbyDrops(player, 3.0);
+        String gunIds = getNearbyDrops(player, 1.0);
 
         if (gunIds.isEmpty()) {
             ActionBarAPI.startActionBar(player, "周围无掉落物", reception.Styles.gradient, List.of("WHITE"), null);
@@ -110,11 +110,11 @@ public class Handler implements PluginMessageListener,Listener {
         }
     }
 
-    private List<String> getNearbyDrops(Player player, double radius) {
+    private String getNearbyDrops(Player player, double radius) {
         List<String> list = new ArrayList<>();
         player.getNearbyEntities(radius, radius, radius).forEach(en -> {
             if (en instanceof org.bukkit.entity.Item) {
-                String GunId = NBT.get(((org.bukkit.entity.Item) en).getItemStack(), (Function<ReadableItemNBT, String>) nbt -> nbt.getString("GunId"));   // 或 "gun_id"
+                String GunId = NBT.get(((Item) en).getItemStack(), (Function<ReadableItemNBT, String>) nbt -> nbt.getString("GunId"));   // 或 "gun_id"
                 switch (GunId) {
                     case "mcs2:cs_glock":
                         list.add("格洛克18型");
@@ -136,7 +136,25 @@ public class Handler implements PluginMessageListener,Listener {
                 }
             }
         });
-        return list;
+        if (!list.isEmpty())
+        {
+            return list.get(0);
+        }
+        return "";
+    }
+
+    private Item getNearbyDropsItem(Player player, double radius) {
+        List<Item> list = new ArrayList<>();
+        player.getNearbyEntities(radius, radius, radius).forEach(en -> {
+            if (en instanceof org.bukkit.entity.Item) {
+                list.add((Item) en);
+            }
+        });
+        if (list.isEmpty()) {
+            return null;
+        }
+        Log.info("获取到需要拾取的物品:" + list.get(0).getItemStack());
+        return list.get(0);
     }
 
     @EventHandler
@@ -156,25 +174,25 @@ public class Handler implements PluginMessageListener,Listener {
                 Log.info(clickedItem.getType().toString());
                 if (clickedItem != null) {
                     if (clickedItem.getType() == Material.AIR || clickedItem.getAmount() <= 0) {
-                        return;  // 忽略空物品
+                        return;
                     }
                     String gunid = NBT.get(clickedItem, nbt -> (String) nbt.getString("GunId"));
                     player.sendMessage("你购买了枪械: " + gunid);
                     switch (gunid) {
                         case "mcs2:cs_glock":
-                            Item.getGlock(player);
+                            Items.getGlock(player);
                             break;
                         case "mcs2:cs_m4a1s":
-                            Item.getM4A1S(player);
+                            Items.getM4A1S(player);
                             break;
                         case "mcs2:cs_awp":
-                            Item.getAWP(player);
+                            Items.getAWP(player);
                             break;
                         case "mcs2:cs_ak":
-                            Item.getAK47(player);
+                            Items.getAK47(player);
                             break;
                         case "mcs2:cs_usp":
-                            Item.getUSP(player);
+                            Items.getUSP(player);
                             break;
                         default:
                             break;
@@ -210,6 +228,10 @@ public class Handler implements PluginMessageListener,Listener {
                     String[] parts = receivedMessage.split("\\s+");
                     if(parts[0].equals("buy")) {
                         Menu.openMenu(getPlayer(parts[1]));
+                    }
+                    if(parts[0].equals("pick")) {
+                        Item item = getNearbyDropsItem(getPlayer(parts[1]),1.0);
+                        PickItem.pickupWithAnimation(getPlayer(parts[1]), item);
                     }
                 }
             } catch (IOException e) {

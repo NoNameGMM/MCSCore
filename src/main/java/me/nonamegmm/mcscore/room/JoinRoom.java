@@ -1,6 +1,6 @@
 package me.nonamegmm.mcscore.room;
 
-import me.nonamegmm.mcscore.Item;
+import me.nonamegmm.mcscore.Items;
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.utils.Message;
 import org.bukkit.Location;
@@ -20,12 +20,12 @@ public class JoinRoom {
             Location location = new Location(world, 5, 19, 36); // 设置一个默认的传送位置
             player.teleport(location);
             player.sendMessage("你已经被传送到世界: " + room);
-            Item.getGlock(player);
-            Item.get9mm(player);
-            Item.get9mm(player);
-            Item.get9mm(player);
-            Item.get9mm(player);
-            Item.get9mm(player);
+            Items.getGlock(player);
+            Items.get9mm(player);
+            Items.get9mm(player);
+            Items.get9mm(player);
+            Items.get9mm(player);
+            Items.get9mm(player);
         }
         else {
             Message.sendActionBar(player, "你已经在房间里了");
