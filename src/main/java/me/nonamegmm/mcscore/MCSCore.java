@@ -58,9 +58,18 @@ public final class MCSCore extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("该命令只能由玩家执行");
+            return true;
+        }
         if(Objects.equals(args[0], "competitive")) {
             if(Objects.equals(args[1], "join")) {
-                joinRoom.joinCompetitive((Player)sender);
+                joinRoom.joinCompetitive(player);
+            }
+            else if(Objects.equals(args[1], "leave")) {
+                playerLeft(sender.getName());
+                Inventory inventory = player.getInventory();
+                inventory.clear();
             }
             else {
                 sender.sendMessage("这个指令还没做");
@@ -81,6 +90,7 @@ public final class MCSCore extends JavaPlugin {
         }
         if(args.length == 2) {
             list.add("join");
+            list.add("leave");
             return list;
         }
         return null;

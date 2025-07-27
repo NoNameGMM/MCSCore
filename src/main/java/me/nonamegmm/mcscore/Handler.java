@@ -17,12 +17,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
@@ -34,6 +34,7 @@ public class Handler implements PluginMessageListener,Listener {
     private static MCSCore plugin = MCSCore.getInstance();
     public static final String menuChannel = "mcscore:menu";
     private static boolean isKKeyPressed = false;
+    private final Set<UUID> seenThisSession = new HashSet<>();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -86,9 +87,21 @@ public class Handler implements PluginMessageListener,Listener {
     }
 
     @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        if (seenThisSession.add(player.getUniqueId())) {
+            player.sendTitle("正在进行枪械验证","请耐心等待",0,100,0);
+            Bukkit.getScheduler().runTaskLater(MCSCore.getInstance(), () -> {
+                Items.getGlock(player);
+                player.kickPlayer("[MCSCore]\n" + player.getName() + " 感谢游玩本服务器\n枪械验证完成\n请重新加入服务器");
+            }, 100L);
+        }
+    }
+
+    @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof org.bukkit.entity.Player) {
-            e.setCancelled(true); 
+            e.setCancelled(true);
         }
     }
 
