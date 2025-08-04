@@ -1,6 +1,7 @@
 package me.nonamegmm.mcscore.room;
 
 import me.nonamegmm.mcscore.Items;
+import me.nonamegmm.mcscore.maps.Teams;
 import me.nonamegmm.mcscore.utils.Log;
 import me.nonamegmm.mcscore.utils.Message;
 import org.bukkit.Location;
@@ -16,10 +17,12 @@ public class JoinRoom {
             String room = join(player.getName());
             Log.info("正在尝试加入匹配");
             Message.sendActionBar(player, "成功加入房间");
+            Teams.CreateTeam(room);
             World world = getServer().getWorld(room);
             Location location = new Location(world, 5, 19, 36); // 设置一个默认的传送位置
             player.teleport(location);
             player.sendMessage("你已经被传送到世界: " + room);
+            Teams.JoinTeam(room,player);
             Items.getGlock(player);
             Items.get9mm(player);
             Items.getT_knife(player);

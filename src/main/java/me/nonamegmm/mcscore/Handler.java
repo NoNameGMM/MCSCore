@@ -14,11 +14,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -42,11 +46,11 @@ public class Handler implements PluginMessageListener,Listener {
         World world = getServer().getWorld("world");
         Location location = new Location(world, 5, 17, 36);
         player.teleport(location);
+        HidePlayer hidePlayer = new HidePlayer();
+        hidePlayer.hideNick(player, player.getName());
         if(!player.hasPlayedBefore())
         {
             createPlayerProfile(player);
-            HidePlayer hidePlayer = new HidePlayer();
-            hidePlayer.hideNick(player, player.getName());
         }
     }
 
@@ -81,9 +85,30 @@ public class Handler implements PluginMessageListener,Listener {
     }
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         playerLeft(event.getPlayer().getName());
         Inventory inventory = event.getPlayer().getInventory();
         inventory.clear();
+        for (Team team : scoreboard.getTeams()) {
+            if (team.hasEntry(event.getPlayer().getName())) {
+                team.removeEntry(event.getPlayer().getName());
+                break;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        playerLeft(event.getPlayer().getName());
+        Inventory inventory = event.getPlayer().getInventory();
+        inventory.clear();
+        for (Team team : scoreboard.getTeams()) {
+            if (team.hasEntry(event.getPlayer().getName())) {
+                team.removeEntry(event.getPlayer().getName());
+                break;
+            }
+        }
     }
 
     @EventHandler

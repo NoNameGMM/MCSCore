@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.codingguru.actionBarAPI.ActionBarAPI;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,9 +101,16 @@ public final class MCSCore extends JavaPlugin {
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
+            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
             playerLeft(player.getName());
             Inventory inventory = player.getInventory();
             inventory.clear();
+            for (Team team : scoreboard.getTeams()) {
+                if (team.hasEntry(player.getName())) {
+                    team.removeEntry(player.getName());
+                    break;
+                }
+            }
         }
     }
 }
