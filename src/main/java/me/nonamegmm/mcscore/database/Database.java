@@ -58,8 +58,32 @@ public class Database {
         } catch (SQLException e) {
             Log.warn(e.getMessage());
         }
+    }
 
+    public static void updatePlayerData(String columnName, String value, String playerName) {
+        try (Connection conn = DriverManager.getConnection(rooms)) {
+            String table = "room1";
+            String updateSql = "UPDATE " + table + " SET " + columnName + " = ? WHERE player_name = ?";
 
+            try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
+                if (columnName.equals("main_num") || columnName.equals("sub_num")) {
+                    ps.setInt(1, Integer.parseInt(value));
+                } else {
+                    ps.setString(1, value);
+                }
+                ps.setString(2, playerName);
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("更新成功，受影响的行数：" + rowsAffected);
+                } else {
+                    System.out.println("未找到匹配的玩家记录，更新失败。");
+                }
+            } catch (SQLException e) {
+                System.out.println("更新数据时发生错误：" + e.getMessage());
+            }
+        } catch (SQLException e) {
+            Log.warn(e.getMessage());
+        }
     }
 
     public static void checkTable() {
@@ -77,7 +101,12 @@ public class Database {
                         "CREATE TABLE IF NOT EXISTS room1 (" +
                         "    id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "    player_name TEXT NOT NULL," +
-                        "    money REAL NOT NULL DEFAULT 0.0" +
+                        "    money REAL NOT NULL DEFAULT 0.0," +
+                        "    main TEXT DEFAULT NULL," +
+                        "    main_num INTEGER DEFAULT 0," +
+                        "    sub TEXT DEFAULT NULL," +
+                        "    sub_num INTEGER DEFAULT 0," +
+                        "    knife TEXT DEFAULT NULL" +
                         ");";
 
                     try (Statement stmt = conn.createStatement()) {
@@ -110,7 +139,7 @@ public class Database {
 
         String updateSql = "UPDATE " + name + " SET room = 0, in_room = '' WHERE ROWID = (SELECT MIN(ROWID) FROM " + name + ")";
         try (Connection conn = DriverManager.getConnection(players);
-             PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+            PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
             int rowsAffected = updateStmt.executeUpdate();
             Log.info("更新成功，受影响的行数：" + rowsAffected);
         } catch (SQLException e) {
@@ -207,7 +236,12 @@ public class Database {
                                 String createSql = "CREATE TABLE IF NOT EXISTS " + nextTableName + " (" +
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                                         "player_name TEXT NOT NULL," +
-                                        "money REAL NOT NULL DEFAULT 0.0" +
+                                        "money REAL NOT NULL DEFAULT 0.0," +
+                                        "main TEXT DEFAULT NULL," +
+                                        "main_num INTEGER DEFAULT 0," +
+                                        "sub TEXT DEFAULT NULL," +
+                                        "sub_num INTEGER DEFAULT 0," +
+                                        "knife TEXT DEFAULT NULL" +
                                         ");";
                                 try (PreparedStatement createStmt = conn.prepareStatement(createSql)) {
                                     createStmt.execute();

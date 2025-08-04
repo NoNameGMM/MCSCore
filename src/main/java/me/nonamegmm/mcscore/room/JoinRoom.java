@@ -22,10 +22,7 @@ public class JoinRoom {
             player.sendMessage("你已经被传送到世界: " + room);
             Items.getGlock(player);
             Items.get9mm(player);
-            Items.get9mm(player);
-            Items.get9mm(player);
-            Items.get9mm(player);
-            Items.get9mm(player);
+            Items.getT_knife(player);
         }
         else {
             Message.sendActionBar(player, "你已经在房间里了");
