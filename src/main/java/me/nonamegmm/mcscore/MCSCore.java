@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
+import static me.nonamegmm.mcscore.maps.Teams.RemoveFromAllRooms;
 
 
 public final class MCSCore extends JavaPlugin {
@@ -72,6 +73,7 @@ public final class MCSCore extends JavaPlugin {
                 playerLeft(sender.getName());
                 Inventory inventory = player.getInventory();
                 inventory.clear();
+                RemoveFromAllRooms(player);
             }
             else {
                 sender.sendMessage("这个指令还没做");
@@ -105,6 +107,7 @@ public final class MCSCore extends JavaPlugin {
             playerLeft(player.getName());
             Inventory inventory = player.getInventory();
             inventory.clear();
+            RemoveFromAllRooms(player);
             for (Team team : scoreboard.getTeams()) {
                 if (team.hasEntry(player.getName())) {
                     team.removeEntry(player.getName());

@@ -31,6 +31,7 @@ import java.util.function.Function;
 
 import static me.nonamegmm.mcscore.database.Database.createPlayerProfile;
 import static me.nonamegmm.mcscore.database.Database.playerLeft;
+import static me.nonamegmm.mcscore.maps.Teams.RemoveFromAllRooms;
 import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Bukkit.getServer;
 
@@ -89,6 +90,7 @@ public class Handler implements PluginMessageListener,Listener {
         playerLeft(event.getPlayer().getName());
         Inventory inventory = event.getPlayer().getInventory();
         inventory.clear();
+        RemoveFromAllRooms(event.getPlayer());
         for (Team team : scoreboard.getTeams()) {
             if (team.hasEntry(event.getPlayer().getName())) {
                 team.removeEntry(event.getPlayer().getName());
@@ -103,6 +105,7 @@ public class Handler implements PluginMessageListener,Listener {
         playerLeft(event.getPlayer().getName());
         Inventory inventory = event.getPlayer().getInventory();
         inventory.clear();
+        RemoveFromAllRooms(event.getPlayer());
         for (Team team : scoreboard.getTeams()) {
             if (team.hasEntry(event.getPlayer().getName())) {
                 team.removeEntry(event.getPlayer().getName());
